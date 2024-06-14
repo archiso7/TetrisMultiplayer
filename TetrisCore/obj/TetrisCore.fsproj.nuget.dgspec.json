@@ -1,0 +1,79 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/archiso/Documents/Code/Tetris#/TetrisCore/TetrisCore.fsproj": {}
+  },
+  "projects": {
+    "/home/archiso/Documents/Code/Tetris#/TetrisCore/TetrisCore.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/archiso/Documents/Code/Tetris#/TetrisCore/TetrisCore.fsproj",
+        "projectName": "TetrisCore",
+        "projectPath": "/home/archiso/Documents/Code/Tetris#/TetrisCore/TetrisCore.fsproj",
+        "packagesPath": "/home/archiso/.nuget/packages/",
+        "outputPath": "/home/archiso/Documents/Code/Tetris#/TetrisCore/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/archiso/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/share/dotnet/sdk/8.0.106/FSharp/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[8.0.102, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.106/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
