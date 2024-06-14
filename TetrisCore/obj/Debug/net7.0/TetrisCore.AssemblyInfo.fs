@@ -10,7 +10,7 @@ open System.Reflection
 [<assembly: System.Reflection.AssemblyCompanyAttribute("TetrisCore")>]
 [<assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")>]
 [<assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")>]
-[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d5475330d62c9bedca2f253ecc52dad613604eb")>]
+[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1839ddf63e176e74378fc83af5cadd871e8b2794")>]
 [<assembly: System.Reflection.AssemblyProductAttribute("TetrisCore")>]
 [<assembly: System.Reflection.AssemblyTitleAttribute("TetrisCore")>]
 [<assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")>]
