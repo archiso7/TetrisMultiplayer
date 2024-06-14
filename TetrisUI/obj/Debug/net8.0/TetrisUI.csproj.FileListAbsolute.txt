@@ -51,3 +51,4 @@
 /home/archiso/Documents/Code/Tetris#/TetrisUI/bin/Debug/net8.0/Triangle.dll
 /home/archiso/Documents/Code/Tetris#/TetrisUI/bin/Debug/net8.0/Triangle.pdb
 /home/archiso/Documents/Code/Tetris#/TetrisUI/bin/Debug/net8.0/Triangle.xml
+/home/archiso/Documents/Code/Tetris#/TetrisUI/obj/Debug/net8.0/TetrisUI.sourcelink.json

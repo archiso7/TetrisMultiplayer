@@ -27,3 +27,4 @@
 /home/archiso/Documents/Code/Tetris#/TetrisCore/bin/Debug/net7.0/zh-Hant/FSharp.Core.resources.dll
 /home/archiso/Documents/Code/Tetris#/TetrisCore/obj/Debug/net7.0/TetrisCore.fsproj.CopyComplete
 /home/archiso/Documents/Code/Tetris#/TetrisCore/obj/Debug/net7.0/TetrisCore.genruntimeconfig.cache
+/home/archiso/Documents/Code/Tetris#/TetrisCore/obj/Debug/net7.0/TetrisCore.sourcelink.json
