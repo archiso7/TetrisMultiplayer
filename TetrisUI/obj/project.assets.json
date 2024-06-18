@@ -2,6 +2,50 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "Delaunator/1.0.10": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/DelaunatorSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/DelaunatorSharp.dll": {}
+        }
+      },
+      "FreeTypeSharp/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/FreeTypeSharp.dll": {
+            "related": ".pdb"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/FreeTypeSharp.dll": {
+            "related": ".pdb"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libfreetype.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx/native/libfreetype.dylib": {
+            "assetType": "native",
+            "rid": "osx"
+          },
+          "runtimes/win-arm64/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win-arm64"
+          },
+          "runtimes/win-x64/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
+        }
+      },
       "FSharp.Core/8.0.102": {
         "type": "package",
         "compile": {
@@ -247,6 +291,52 @@
           }
         }
       },
+      "SixLabors.Fonts/2.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/SixLabors.Fonts.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.Fonts.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "SixLabors.ImageSharp/3.1.4": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/SixLabors.ImageSharp.props": {}
+        }
+      },
+      "SixLabors.ImageSharp.Drawing/2.1.3": {
+        "type": "package",
+        "dependencies": {
+          "SixLabors.Fonts": "2.0.3",
+          "SixLabors.ImageSharp": "3.1.4"
+        },
+        "compile": {
+          "lib/net6.0/SixLabors.ImageSharp.Drawing.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.Drawing.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.Runtime.CompilerServices.Unsafe/5.0.0": {
         "type": "package",
         "compile": {
@@ -286,6 +376,58 @@
     }
   },
   "libraries": {
+    "Delaunator/1.0.10": {
+      "sha512": "BYRTAWhPb0N9gIRGwSZ3vN5loMDIvNOOhJCsLT4usMYBqNH/oOuVsinzLxVrY8RFx7u3dGKaNhAbsuEVNJ79pw==",
+      "type": "package",
+      "path": "delaunator/1.0.10",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "delaunator.1.0.10.nupkg.sha512",
+        "delaunator.nuspec",
+        "lib/net471/DelaunatorSharp.dll",
+        "lib/netstandard2.0/DelaunatorSharp.dll"
+      ]
+    },
+    "FreeTypeSharp/3.0.0": {
+      "sha512": "muhYzQEm5uZ4TVzdEZlPO+2zmNoJqVOcdamqfYZosUHg0V4tp6+we5mxPxh5Ib1ivYLBZlgEYey6sI8wNta26A==",
+      "type": "package",
+      "path": "freetypesharp/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "freetypesharp.3.0.0.nupkg.sha512",
+        "freetypesharp.nuspec",
+        "lib/net8.0-android34.0/FreeTypeSharp.aar",
+        "lib/net8.0-android34.0/FreeTypeSharp.dll",
+        "lib/net8.0-android34.0/FreeTypeSharp.pdb",
+        "lib/net8.0-android34.0/FreeTypeSharp.xml",
+        "lib/net8.0-ios17.2/FreeTypeSharp.dll",
+        "lib/net8.0-ios17.2/FreeTypeSharp.pdb",
+        "lib/net8.0-ios17.2/FreeTypeSharp.resources/FreeType2.xcframework/Info.plist",
+        "lib/net8.0-ios17.2/FreeTypeSharp.resources/FreeType2.xcframework/ios-arm64/libfreetype.a",
+        "lib/net8.0-ios17.2/FreeTypeSharp.resources/FreeType2.xcframework/ios-arm64_x86_64-simulator/libfreetype.a",
+        "lib/net8.0-ios17.2/FreeTypeSharp.resources/manifest",
+        "lib/net8.0-tvos17.2/FreeTypeSharp.dll",
+        "lib/net8.0-tvos17.2/FreeTypeSharp.pdb",
+        "lib/net8.0-tvos17.2/FreeTypeSharp.resources/FreeType2.xcframework/Info.plist",
+        "lib/net8.0-tvos17.2/FreeTypeSharp.resources/FreeType2.xcframework/tvos-arm64/libfreetype.a",
+        "lib/net8.0-tvos17.2/FreeTypeSharp.resources/FreeType2.xcframework/tvos-arm64_x86_64-simulator/libfreetype.a",
+        "lib/net8.0-tvos17.2/FreeTypeSharp.resources/manifest",
+        "lib/net8.0/FreeTypeSharp.dll",
+        "lib/net8.0/FreeTypeSharp.pdb",
+        "lib/netcoreapp3.1/FreeTypeSharp.dll",
+        "lib/netcoreapp3.1/FreeTypeSharp.pdb",
+        "lib/netstandard2.0/FreeTypeSharp.dll",
+        "lib/netstandard2.0/FreeTypeSharp.pdb",
+        "runtimes/linux-x64/native/libfreetype.so",
+        "runtimes/osx/native/libfreetype.dylib",
+        "runtimes/win-arm64/native/freetype.dll",
+        "runtimes/win-x64/native/freetype.dll",
+        "runtimes/win-x86/native/freetype.dll"
+      ]
+    },
     "FSharp.Core/8.0.102": {
       "sha512": "mgaULXQwSVADTXBjeO8amVb5UfiGjsA6BcwZkB+K4evBTHMHGSLQf2B9zgLS4bU4ri5JlZZd4EWvChtU2n3M4Q==",
       "type": "package",
@@ -493,6 +635,52 @@
         "opentk.windowing.graphicslibraryframework.nuspec"
       ]
     },
+    "SixLabors.Fonts/2.0.3": {
+      "sha512": "IY+i5JsUoFTyLvNOlLFUak4nJajSZdfxYqCbDCSYeGDGwHNBtJo0ICduAFGaYaqdL41+YHn7LMrp1AwIU/29Ag==",
+      "type": "package",
+      "path": "sixlabors.fonts/2.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "lib/net6.0/SixLabors.Fonts.dll",
+        "lib/net6.0/SixLabors.Fonts.xml",
+        "sixlabors.fonts.128.png",
+        "sixlabors.fonts.2.0.3.nupkg.sha512",
+        "sixlabors.fonts.nuspec"
+      ]
+    },
+    "SixLabors.ImageSharp/3.1.4": {
+      "sha512": "lFIdxgGDA5iYkUMRFOze7BGLcdpoLFbR+a20kc1W7NepvzU7ejtxtWOg9RvgG7kb9tBoJ3ONYOK6kLil/dgF1w==",
+      "type": "package",
+      "path": "sixlabors.imagesharp/3.1.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "build/SixLabors.ImageSharp.props",
+        "lib/net6.0/SixLabors.ImageSharp.dll",
+        "lib/net6.0/SixLabors.ImageSharp.xml",
+        "sixlabors.imagesharp.128.png",
+        "sixlabors.imagesharp.3.1.4.nupkg.sha512",
+        "sixlabors.imagesharp.nuspec"
+      ]
+    },
+    "SixLabors.ImageSharp.Drawing/2.1.3": {
+      "sha512": "Bo8MeLEhKlZTSV29lh1iZmKVnLFvp+lNPVIo6X1Nu/G3xVwYuhPBjTuxUNhO6bxsVR9tLDuWZULxHSJAXu6LFw==",
+      "type": "package",
+      "path": "sixlabors.imagesharp.drawing/2.1.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "lib/net6.0/SixLabors.ImageSharp.Drawing.dll",
+        "lib/net6.0/SixLabors.ImageSharp.Drawing.xml",
+        "sixlabors.imagesharp.drawing.128.png",
+        "sixlabors.imagesharp.drawing.2.1.3.nupkg.sha512",
+        "sixlabors.imagesharp.drawing.nuspec"
+      ]
+    },
     "System.Runtime.CompilerServices.Unsafe/5.0.0": {
       "sha512": "ZD9TMpsmYJLrxbbmdvhwt9YEgG5WntEnZ/d1eH8JBX9LBp+Ju8BSBhUGbZMNVHHomWo2KVImJhTDl2hIgw/6MA==",
       "type": "package",
@@ -538,7 +726,12 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Delaunator >= 1.0.10",
+      "FreeTypeSharp >= 3.0.0",
       "OpenTK >= 4.8.2",
+      "SixLabors.Fonts >= 2.0.3",
+      "SixLabors.ImageSharp >= 3.1.4",
+      "SixLabors.ImageSharp.Drawing >= 2.1.3",
       "TetrisCore >= 1.0.0",
       "Triangle >= 1.0.0-beta5"
     ]
@@ -587,9 +780,29 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Delaunator": {
+            "target": "Package",
+            "version": "[1.0.10, )"
+          },
+          "FreeTypeSharp": {
+            "target": "Package",
+            "version": "[3.0.0, )"
+          },
           "OpenTK": {
             "target": "Package",
             "version": "[4.8.2, )"
+          },
+          "SixLabors.Fonts": {
+            "target": "Package",
+            "version": "[2.0.3, )"
+          },
+          "SixLabors.ImageSharp": {
+            "target": "Package",
+            "version": "[3.1.4, )"
+          },
+          "SixLabors.ImageSharp.Drawing": {
+            "target": "Package",
+            "version": "[2.1.3, )"
           }
         },
         "imports": [

@@ -29,26 +29,26 @@ namespace TetrisUI
             int windowSizeLocation = GL.GetUniformLocation(shaderProgram, "uWindowSize");
             GL.Uniform2(windowSizeLocation, new Vector2(1280, 720));
 
+            // Calculate scaling factors based on window size and aspect ratio
+            float scaleX = windowSize.X / 1280f; // Y is the base height (720)
+            float scaleY = windowSize.Y / 720f; // Maintain aspect ratio
+            float scale = Math.Min(scaleX, scaleY);
+
+
+            // Calculate the position offset for centering after scaling
+            Vector2 positionOffset = CalculatePositionOffset(windowSize, new Vector2(1280f, 720f));
+
+            // Update the position offset in the shader
+            int positionOffsetLocation = GL.GetUniformLocation(shaderProgram, "uPositionOffset");
+            GL.Uniform2(positionOffsetLocation, positionOffset);
+
             if (screen.objects is not null)
             {
                 foreach (var obj in screen.objects)
                 {
-                    // Calculate scaling factors based on window size and aspect ratio
-                    float scaleX = windowSize.X / 1280f; // Y is the base height (720)
-                    float scaleY = windowSize.Y / 720f; // Maintain aspect ratio
-                    float scale = Math.Min(scaleX, scaleY);
-
                     // Update the scaling factors in the shader
                     int scaleLocation = GL.GetUniformLocation(shaderProgram, "uScale");
                     GL.Uniform2(scaleLocation, new Vector2(scale, scale));
-
-                    // Calculate the position offset for centering after scaling
-                    Vector2 positionOffset = CalculatePositionOffset(windowSize, new Vector2(1280f, 720f));
-
-                    // Update the position offset in the shader
-                    int positionOffsetLocation = GL.GetUniformLocation(shaderProgram, "uPositionOffset");
-                    GL.Uniform2(positionOffsetLocation, positionOffset);
-
                     // Render the object
                     obj.Render(shaderProgram);
                 }

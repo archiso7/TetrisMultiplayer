@@ -116,9 +116,29 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Delaunator": {
+              "target": "Package",
+              "version": "[1.0.10, )"
+            },
+            "FreeTypeSharp": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
             "OpenTK": {
               "target": "Package",
               "version": "[4.8.2, )"
+            },
+            "SixLabors.Fonts": {
+              "target": "Package",
+              "version": "[2.0.3, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.4, )"
+            },
+            "SixLabors.ImageSharp.Drawing": {
+              "target": "Package",
+              "version": "[2.1.3, )"
             }
           },
           "imports": [

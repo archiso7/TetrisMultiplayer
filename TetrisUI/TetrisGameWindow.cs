@@ -2,8 +2,9 @@ using OpenTK.Windowing.Common;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
-using static TetrisCore.Types;
+using TetrisCore;
 using static TetrisCore.GameLogic;
+using SixLabors.Fonts;
 
 namespace TetrisUI
 {
@@ -21,10 +22,12 @@ namespace TetrisUI
         {
             game = new Game();
             mainMenu = new Menu();
+            Font f = SystemFonts.CreateFont("FreeSerif", 200, FontStyle.Regular);
             mainMenu.objects = new List<GameObject>{
-                new Rectangle(new Vector2(500f,500f), new Vector2(-500f,0f), new Color4(0.5f,0f,0f,1f)),
-                new Rectangle(new Vector2(500f,500f), new Vector2(0f,0f), new Color4(0f,0.5f,0f,1f)),
-                new Rectangle(new Vector2(500f,500f), new Vector2(500f,0f), new Color4(0f,0f,0.5f,1f))
+                // new Rectangle(new Vector2(500f,500f), new Vector2(-500f,0f), new Color4(0.5f,0f,0f,1f)),
+                // new Rectangle(new Vector2(500f,500f), new Vector2(0f,0f), new Color4(0f,0.5f,0f,1f)),
+                // new Rectangle(new Vector2(500f,500f), new Vector2(500f,0f), new Color4(0f,0f,0.5f,1f)),
+                new TextObject("TETRIS", new Vector2(0,-400), new Color4(0.1f,0.4f,0.2f,0f), f),
             };
 
             pauseMenu = new Menu();
