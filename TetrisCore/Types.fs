@@ -5,11 +5,67 @@ module Types =
     open System
 
     type Position = int * int
-    type Shape = I | O | T | S | Z | J | L
-    type Color = Gray=0 | LightBlue=1 | Yellow=2 | Purple=3 | Green=4 | Red=5 | Blue=6 | Orange=7
+    type Shape =
+    | I = 1
+    | O = 2
+    | T = 3
+    | S = 4
+    | Z = 5
+    | J = 6
+    | L = 7
+
+    let pieceTable = 
+        let dict = 
+            dict [
+                Shape.I, 
+                [| 
+                    [|0;0;0;0|]; 
+                    [|1;1;1;1|]; 
+                    [|0;0;0;0|]; 
+                    [|0;0;0;0|] 
+                |]
+                Shape.O, 
+                [| 
+                    [|0;1;1;0|]; 
+                    [|0;1;1;0|] 
+                |]
+                Shape.T, 
+                [| 
+                    [|0;1;0|]; 
+                    [|1;1;1|]; 
+                    [|0;0;0|] 
+                |]
+                Shape.S, 
+                [| 
+                    [|0;1;1|]; 
+                    [|1;1;0|]; 
+                    [|0;0;0|] 
+                |]
+                Shape.Z, 
+                [| 
+                    [|1;1;0|]; 
+                    [|0;1;1|]; 
+                    [|0;0;0|] 
+                |]
+                Shape.J, 
+                [| 
+                    [|1;0;0|]; 
+                    [|1;1;1|]; 
+                    [|0;0;0|] 
+                |]
+                Shape.L, 
+                [| 
+                    [|0;0;1|]; 
+                    [|1;1;1|]; 
+                    [|0;0;0|] 
+                |]
+            ]
+        dict
 
     type TetrisPiece = {
         Shape: Shape
+        Table: int[][]
+        Rotation: int
         Position: Position
     }
 
@@ -18,7 +74,7 @@ module Types =
         Hold: TetrisPiece Option
         Bag: TetrisPiece list
         Queue: TetrisPiece list
-        Board: Color list list
+        Board: int list list
         Score: int
     }
 
@@ -37,3 +93,11 @@ module Types =
 
         override this.ToString() =
             sprintf "(%f, %f)" this.X this.Y
+
+    let wallKick =
+        [
+            (1, 0)
+            (1, -1)
+            (0, 2)
+            (1, 2)
+        ]

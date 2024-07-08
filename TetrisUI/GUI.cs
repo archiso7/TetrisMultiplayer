@@ -1,26 +1,14 @@
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Windowing.Desktop;
-using System;
-using System.Collections.Generic;
-using static TetrisUI.Renderer;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using DelaunatorSharp;
 using Microsoft.FSharp.Collections;
-using TetrisCore;
-using Microsoft.FSharp.Core;
-
 
 namespace TetrisUI
 {
     public interface Screen
     {
-        public void Render();
         public void HandleInput();
         public void Update();
         List<GameObject> objects { get; set; }
@@ -28,7 +16,7 @@ namespace TetrisUI
 
     public interface GameObject
     {
-        public void Render(int _shaderProgram, Vector2? scale = null);
+        public void Render(int _shaderProgram, Vector2? scale = null, Vector2? offset = null);
     }
 
     public class Poly : GameObject
@@ -99,11 +87,11 @@ namespace TetrisUI
             return (resultVerts, resultTris);
         }
 
-        public void Render(int _shaderProgram, Vector2? scale = null)
+        public void Render(int _shaderProgram, Vector2? scale = null, Vector2? offset = null)
         {
             foreach (Tri triangle in Triangles)
             {
-                triangle.Render(Position, Color, _shaderProgram);
+                triangle.Render(Position, Color, _shaderProgram, scale, offset);
             }
 
             // debug to see individual triangles
@@ -139,6 +127,46 @@ namespace TetrisUI
         }
     }
 
+    public class Button : GameObject
+    {
+        public event EventHandler? Clicked;
+        public Poly Polygon;
+        public TextObject Text;
+        public Color4 Color;
+        public Vector2 Position;
+
+        public Button(Poly polygon, TextObject text, Color4 color, Vector2 position)
+        {
+            Polygon = polygon;
+            Text = text;
+            Color = color;
+            Position = position;
+        }
+
+        public void OnClick()
+        {
+            Clicked?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ContainsPoint(Vector2 point)
+        {
+            float minX = Polygon.Vertices.Min(v => v.X) + Position.X;
+            float maxX = Polygon.Vertices.Max(v => v.X) + Position.X;
+            float minY = Polygon.Vertices.Min(v => v.Y) + Position.Y;
+            float maxY = Polygon.Vertices.Max(v => v.Y) + Position.Y;
+
+            return point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY;
+        }
+
+        public void Render(int _shaderProgram, Vector2? scale = null, Vector2? offset = null)
+        {
+            Vector2 Offset = offset ?? new Vector2(0,0);
+            Offset += Position;
+            Polygon.Render(_shaderProgram, scale, Offset);
+            Text.Render(_shaderProgram, scale, Offset);
+        }
+    }
+
     public class TextObject : GameObject
     {
         public string Text { get; set; }
@@ -162,7 +190,7 @@ namespace TetrisUI
 
             var textOptions = new TextOptions(Font)
             {
-                VerticalAlignment = VerticalAlignment.Bottom,
+                VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
 
@@ -201,7 +229,6 @@ namespace TetrisUI
             }
 
             return polygons;
-
         }
 
         private bool IsClockwise(List<Vector2> points)
@@ -216,10 +243,12 @@ namespace TetrisUI
             return sum > 0; // Clockwise if sum is positive
         }
 
-        public void Render(int _shaderProgram, Vector2? scale = null)
+        public void Render(int _shaderProgram, Vector2? scale = null, Vector2? offset = null)
         {
             Vector2 Scale = scale ?? new Vector2(1,1);
             Scale = Scale * new Vector2(1,-1);
+            Vector2 Offset = offset ?? new Vector2(0,0);
+            Offset = Offset * new Vector2(1,-1);
 
             int scaleLocation = GL.GetUniformLocation(_shaderProgram, "uScale");
             float[] currentScale = new float[2];
@@ -228,7 +257,7 @@ namespace TetrisUI
 
             foreach (Poly polygon in textPolygons)
             {
-                polygon.Render(_shaderProgram, scale);
+                polygon.Render(_shaderProgram, scale, Offset);
             }
         }
     }
@@ -262,8 +291,10 @@ namespace TetrisUI
             GL.BindVertexArray(0);
         }
 
-        public void Render(Vector2 position, Color4 color, int _shaderProgram, Vector2? scale = null)
+        public void Render(Vector2 position, Color4 color, int _shaderProgram, Vector2? scale = null, Vector2? offset = null)
         {
+            Vector2 Position = offset ?? new Vector2(0,0);
+            Position += position;
             Vector2 Scale = scale ?? new Vector2(1,1);
 
             GL.UseProgram(_shaderProgram);
@@ -282,7 +313,7 @@ namespace TetrisUI
                 Console.WriteLine("uPosition uniform not found in shader.");
                 return;
             }
-            GL.Uniform2(positionLocation, position);
+            GL.Uniform2(positionLocation, Position);
 
             GL.BindVertexArray(_vao);
             GL.DrawArrays(PrimitiveType.Triangles, 0, verts.Length / 2);

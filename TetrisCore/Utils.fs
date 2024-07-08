@@ -8,7 +8,7 @@ module Utils =
 
     let crossProduct (v1: Vector2) (v2: Vector2) =
         v1.X * v2.Y - v1.Y * v2.X
-    
+
     let pointInTriangle a b c p =
         let sign (p1: Vector2) (p2: Vector2) (p3: Vector2) = (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y)
 
@@ -29,6 +29,28 @@ module Utils =
             result + divisor
         else
             result
+
+    let isConvex (polygon: Vector2 list) =
+        let rec checkConvexity idx sign =
+            if idx >= polygon.Length then true
+            else
+                let prev = polygon.[customModulo (idx - 1) polygon.Length]
+                let curr = polygon.[idx]
+                let next = polygon.[customModulo (idx + 1) polygon.Length]
+                let cross = crossProduct (curr - prev) (next - curr)
+                let newSign = Math.Sign(cross)
+                if sign = 0 then checkConvexity (idx + 1) newSign
+                else if newSign = 0 || newSign = sign then checkConvexity (idx + 1) sign
+                else false
+        checkConvexity 0 0
+
+    let sliceConvexPolygon (polygon: Vector2 list) =
+        let rec slice idx acc =
+            if idx + 2 < polygon.Length then
+                let triangle = [polygon.[0]; polygon.[idx + 1]; polygon.[idx + 2]]
+                slice (idx + 1) (triangle :: acc)
+            else acc
+        slice 0 []
 
     let isEar (polygon: Vector2 list) (i: int) : bool = 
         let prev = customModulo (i - 1) polygon.Length
@@ -56,27 +78,29 @@ module Utils =
         elif List.length polygon = 3 then
             [polygon]
         else
-            let mutable result = []
-            let mutable mutablePolygon = polygon
+            if isConvex polygon then
+                sliceConvexPolygon polygon
+            else
+                let mutable result = []
+                let mutable mutablePolygon = polygon
 
-            while mutablePolygon.Length > 3 do
-                let mutable earFound = false
-                let mutable counter = 0
-                while counter < mutablePolygon.Length && not earFound do
-                    if isEar mutablePolygon counter then
-                        let prev = customModulo (counter - 1) mutablePolygon.Length
-                        let next = customModulo (counter + 1) mutablePolygon.Length
-                        result <- List.append result [[mutablePolygon.[prev]; mutablePolygon.[counter]; mutablePolygon.[next]]]
-                        mutablePolygon <- removeAtIndex counter mutablePolygon
-                        earFound <- true
-                    else 
-                        counter <- counter + 1
-                if not earFound then 
-                    failwith "No ear found. Invalid polygon or algorithm error."
+                while mutablePolygon.Length > 3 do
+                    let mutable earFound = false
+                    let mutable counter = 0
+                    while counter < mutablePolygon.Length && not earFound do
+                        if isEar mutablePolygon counter then
+                            let prev = customModulo (counter - 1) mutablePolygon.Length
+                            let next = customModulo (counter + 1) mutablePolygon.Length
+                            result <- List.append result [[mutablePolygon.[prev]; mutablePolygon.[counter]; mutablePolygon.[next]]]
+                            mutablePolygon <- removeAtIndex counter mutablePolygon
+                            earFound <- true
+                        else 
+                            counter <- counter + 1
+                    if not earFound then 
+                        failwith "No ear found. Invalid polygon or algorithm error."
 
-            result <- List.append result [mutablePolygon]
-            result
-
+                result <- List.append result [mutablePolygon]
+                result
 
     // Shuffle function
     let shuffle<'a> (list: 'a list) =
