@@ -1,5 +1,6 @@
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Windowing.Common;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
@@ -9,7 +10,7 @@ namespace TetrisUI
 {
     public interface Screen
     {
-        public void HandleInput();
+        public void HandleInput(KeyboardKeyEventArgs e);
         public void Update();
         List<GameObject> objects { get; set; }
     }

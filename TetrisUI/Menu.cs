@@ -1,3 +1,5 @@
+using OpenTK.Windowing.Common;
+
 namespace TetrisUI
 {
     public class Menu : Screen
@@ -9,7 +11,7 @@ namespace TetrisUI
             objects = new List<GameObject>();
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardKeyEventArgs e)
         {
             
         }

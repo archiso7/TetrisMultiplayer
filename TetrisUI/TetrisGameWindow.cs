@@ -85,7 +85,6 @@ namespace TetrisUI
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            inputManager.HandleInput(currentScreen);
             currentScreen.Update();
         }
     }

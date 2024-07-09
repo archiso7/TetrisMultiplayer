@@ -26,8 +26,8 @@ module Types =
                 |]
                 Shape.O, 
                 [| 
-                    [|0;1;1;0|]; 
-                    [|0;1;1;0|] 
+                    [|1;1|]; 
+                    [|1;1|] 
                 |]
                 Shape.T, 
                 [| 
@@ -70,11 +70,11 @@ module Types =
     }
 
     type GameState = {
-        CurrentPiece: TetrisPiece
+        mutable CurrentPiece: TetrisPiece
         Hold: TetrisPiece Option
         Bag: TetrisPiece list
         Queue: TetrisPiece list
-        Board: int list list
+        mutable Board: int list list
         Score: int
     }
 

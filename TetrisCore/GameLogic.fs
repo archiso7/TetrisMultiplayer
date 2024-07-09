@@ -84,12 +84,25 @@ module GameLogic =
         for x in 0 .. width - 1 do
             for y in 0 .. height - 1 do
                 if shape.[y].[x] = 1 then
-                    if (pieceX + x < 0) || (pieceX + x > board.Length) || (pieceY + y < 0) || (pieceY + y > board.[0].Length) then
+                    if (pieceX + x < 0) || (pieceX + x > board.Length - 1) || (pieceY + y < 0) || (pieceY + y > board.[0].Length - 1) then
                         collisionDetected <- true
                     elif board.[pieceX + x].[pieceY + y] <> 0 then 
                         collisionDetected <- true
 
         collisionDetected
+
+    let movePiece (board: int[][]) (piece: TetrisPiece) (direction: Position) =
+        let newPos = (fst piece.Position + fst direction, snd piece.Position + snd direction)
+        let mutable newPiece = {piece with Position = newPos}
+        let cleanBoard = placePiece board piece true
+        let outPiece = 
+            if checkCollision cleanBoard newPiece then
+                piece
+            else
+                newPiece
+        let newBoard = placePiece cleanBoard outPiece false
+
+        (newBoard, outPiece)
 
     let rotatePiece (board: int[][]) (piece: TetrisPiece) (direction: int) =
         let res = customModulo (piece.Rotation + direction) 4
@@ -117,7 +130,3 @@ module GameLogic =
         let newBoard = placePiece cleanBoard newPiece false
 
         (newBoard, newPiece)
-
-    let movePiece piece direction state =
-        // Logic to move a piece
-        piece

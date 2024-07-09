@@ -2,7 +2,9 @@ using static TetrisCore.Types;
 using static TetrisCore.GameLogic;
 using Microsoft.FSharp.Collections;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using System.Drawing;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace TetrisUI
 {
@@ -11,11 +13,33 @@ namespace TetrisUI
         public List<GameObject> objects { get; set; }
         private GameState gameState;
         private Board board;
+        private KeyBindingManager keyBindingManager;
 
         public Game()
         {
             // Initialize the game state
             gameState = initialState();
+            keyBindingManager = new KeyBindingManager();
+            // Bind keys to actions
+            keyBindingManager.BindKey(Keys.Left, GameAction.MoveLeft);
+            keyBindingManager.BindKey(Keys.Right, GameAction.MoveRight);
+            keyBindingManager.BindKey(Keys.Down, GameAction.MoveDown);
+            keyBindingManager.BindKey(Keys.X, GameAction.RotateC);
+            keyBindingManager.BindKey(Keys.Z, GameAction.RotateCC);
+            keyBindingManager.BindKey(Keys.C, GameAction.Hold);
+            keyBindingManager.BindKey(Keys.Space, GameAction.Drop);
+            keyBindingManager.BindKey(Keys.Escape, GameAction.Pause);
+
+            // Bind actions to handlers
+            keyBindingManager.BindAction(GameAction.MoveLeft, () => Move(-1,0));
+            keyBindingManager.BindAction(GameAction.MoveRight, () => Move(1,0));
+            keyBindingManager.BindAction(GameAction.MoveDown, () => Move(0,1));
+            keyBindingManager.BindAction(GameAction.RotateC, () => Rotate(1));
+            keyBindingManager.BindAction(GameAction.RotateCC, () => Rotate(-1));
+            keyBindingManager.BindAction(GameAction.Hold, Hold);
+            keyBindingManager.BindAction(GameAction.Drop, Drop);
+            keyBindingManager.BindAction(GameAction.Pause, Pause);
+
             objects = new List<GameObject>();
 
             // Define the size of each tile and the size of the board
@@ -46,25 +70,51 @@ namespace TetrisUI
             // Create the board object with the initialized tiles
             board = new Board(new OpenTK.Mathematics.Vector2(boardWidth, boardHeight), tiles, new OpenTK.Mathematics.Vector2(0, -50));
             objects.Add(board);
-
-            var piece = createPiece(Shape.J, 0,0);
-            var piece1 = new TetrisPiece(Shape.J, rotateMatrix(piece.Table, 1), 1, new Tuple<int,int>(0,0));
-            var piece2 = createPiece(Shape.I, 0,1);
-
-            int[][] boardColor;
-
-            board.SetTileColors(placePiece(board.GetTileColors(), piece2, false));
-
-            var collide = checkCollision(board.GetTileColors(), piece1);
-
-            Console.WriteLine(collide);
-
-            ( boardColor, piece ) = rotatePiece(placePiece(board.GetTileColors(), piece, false), piece, 1);
-
-            board.SetTileColors(boardColor);
+            board.SetTileColors(placePiece(board.GetTileColors(), gameState.CurrentPiece, false));
+            gameState.Board = Utils.ToFSharpList(board.GetTileColors());
         }
 
-        public void HandleInput()
+        public void HandleInput(KeyboardKeyEventArgs e)
+        {
+            Keys k = e.Key;
+            if(!e.IsRepeat) // checks if key is first press or hold, could maybe pass this into a binding system insted idk
+            {
+                keyBindingManager.HandleKeyPress(k);
+            }
+        }
+
+        private void Move(int xDir, int yDir)
+        {
+            TetrisPiece piece = gameState.CurrentPiece;
+            int[][] b = board.GetTileColors();
+            (b, piece) = movePiece(b, piece, xDir, yDir);
+            gameState.CurrentPiece = piece;
+            board.SetTileColors(b);
+            gameState.Board = Utils.ToFSharpList(b);
+        }
+
+        private void Rotate(int dir)
+        {
+            int direcetion =  dir > 0 ? dir : 3;
+            TetrisPiece piece = gameState.CurrentPiece;
+            int[][] b = board.GetTileColors();
+            (b, piece) = rotatePiece(b, piece, direcetion);
+            gameState.CurrentPiece = piece;
+            board.SetTileColors(b);
+            gameState.Board = Utils.ToFSharpList(b);
+        }
+
+        private void Hold()
+        {
+
+        }
+
+        private void Drop()
+        {
+
+        }
+
+        private void Pause()
         {
 
         }

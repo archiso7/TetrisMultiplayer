@@ -1,4 +1,5 @@
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Mathematics;
 
@@ -23,6 +24,7 @@ namespace TetrisUI
         {
             // Invoke the KeyPressed event when a key is pressed
             KeyPressed?.Invoke(args);
+            Window.currentScreen.HandleInput(args);
         }
 
         private void HandleMouseDown(MouseButtonEventArgs args)
@@ -57,10 +59,53 @@ namespace TetrisUI
             float worldY = -(screenPos.Y - Window.Size.Y / 2f) * 2f;
             return new Vector2(worldX, worldY);
         }
+    }
 
-        public void HandleInput(Screen screen)
+    public enum GameAction
         {
-            
+            MoveLeft,
+            MoveRight,
+            MoveDown,
+            RotateC,
+            RotateCC,
+            Hold,
+            Drop,
+            Pause
+            // Add more actions as needed
+        }
+
+    public class KeyBindingManager
+    {
+
+        private Dictionary<Keys, GameAction> keyBindings;
+        private Dictionary<GameAction, Action> actionHandlers;
+
+        public KeyBindingManager()
+        {
+            keyBindings = new Dictionary<Keys, GameAction>();
+            actionHandlers = new Dictionary<GameAction, Action>();
+        }
+
+        public void BindKey(Keys key, GameAction action)
+        {
+            keyBindings[key] = action;
+        }
+
+        public void BindAction(GameAction action, Action handler)
+        {
+            actionHandlers[action] = handler;
+        }
+
+        public void HandleKeyPress(Keys key)
+        {
+            if (keyBindings.TryGetValue(key, out GameAction action))
+            {
+                if (actionHandlers.TryGetValue(action, out Action? handler))
+                {
+                    handler.Invoke();
+                }
+            }
         }
     }
+
 }
