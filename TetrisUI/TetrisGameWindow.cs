@@ -55,6 +55,7 @@ namespace TetrisUI
         public void SingleButton(object? sender, EventArgs e)
         {
             currentScreen = game;
+            game.Start();
         }
 
         public void MultiButton(object? sender, EventArgs e)

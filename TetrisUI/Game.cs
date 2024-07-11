@@ -5,11 +5,17 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using System.Drawing;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Timers;
 
 namespace TetrisUI
 {
     public class Game : Screen
     {
+        private System.Timers.Timer lockTimer;
+        private const int LockDelay = 500; // Lock delay in milliseconds
+        private bool isPieceLanded;
+        private System.Timers.Timer dropTimer;
+        private const int DropInterval = 1000;
         public List<GameObject> objects { get; set; }
         private GameState gameState;
         private Board board;
@@ -34,44 +40,21 @@ namespace TetrisUI
             keyBindingManager.BindAction(GameAction.MoveLeft, () => Move(-1,0));
             keyBindingManager.BindAction(GameAction.MoveRight, () => Move(1,0));
             keyBindingManager.BindAction(GameAction.MoveDown, () => Move(0,1));
-            keyBindingManager.BindAction(GameAction.RotateC, () => Rotate(1));
-            keyBindingManager.BindAction(GameAction.RotateCC, () => Rotate(-1));
+            keyBindingManager.BindAction(GameAction.RotateC, () => Rotate(-1));
+            keyBindingManager.BindAction(GameAction.RotateCC, () => Rotate(1));
             keyBindingManager.BindAction(GameAction.Hold, Hold);
             keyBindingManager.BindAction(GameAction.Drop, Drop);
             keyBindingManager.BindAction(GameAction.Pause, Pause);
 
             objects = new List<GameObject>();
 
-            // Define the size of each tile and the size of the board
-            OpenTK.Mathematics.Vector2 tileSize = new OpenTK.Mathematics.Vector2(40, 40);
-            int boarderSize = 5;
-            int boardWidth = gameState.Board.Length;
-            int boardHeight = gameState.Board[0].Length;
-            float boardPixelHeight = boardHeight * (tileSize.Y + boarderSize);
-            float boardPixelWidth = boardWidth * (tileSize.X + boarderSize);
+            dropTimer = new System.Timers.Timer(DropInterval);
+            dropTimer.Elapsed += (sender, e) => Move(0, 1);
 
-            // Initialize the tiles array
-            Rectangle[][] tiles = new Rectangle[boardWidth][];
-            for (int x = 0; x < boardWidth; x++)
-            {
-                tiles[x] = new Rectangle[boardHeight];
-                for (int y = 0; y < boardHeight; y++)
-                {
-                    // Calculate the position of each tile based on its size and board position
-                    OpenTK.Mathematics.Vector2 position = new OpenTK.Mathematics.Vector2((x * (tileSize.X + boarderSize)) - (boardPixelWidth / 2f), (y * -(tileSize.Y + boarderSize)) + (boardPixelHeight / 2f));
-                    // Determine the color of the tile based on the game state
-                    Color4 color = (Color4)Board.ConvertColor(gameState.Board[x][y]);
+            lockTimer = new System.Timers.Timer(LockDelay);
+            lockTimer.Elapsed += (sender, e) => LockPiece();
 
-                    // Create a new rectangle for the tile
-                    tiles[x][y] = new Rectangle(tileSize, position, color);
-                }
-            }
-
-            // Create the board object with the initialized tiles
-            board = new Board(new OpenTK.Mathematics.Vector2(boardWidth, boardHeight), tiles, new OpenTK.Mathematics.Vector2(0, -50));
-            objects.Add(board);
-            board.SetTileColors(placePiece(board.GetTileColors(), gameState.CurrentPiece, false));
-            gameState.Board = Utils.ToFSharpList(board.GetTileColors());
+            board = new Board(new OpenTK.Mathematics.Vector2(0,0), new Rectangle[][]{}, new OpenTK.Mathematics.Vector2(0,0));
         }
 
         public void HandleInput(KeyboardKeyEventArgs e)
@@ -83,14 +66,41 @@ namespace TetrisUI
             }
         }
 
+        private void LockPiece()
+        {
+            lockTimer.Stop();
+            isPieceLanded = false;
+            gameState = nextPiece(board.GetTileColors(), gameState);
+            board.SetTileColors(Utils.FSharpListToArray(gameState.Board));
+        }
+
+        private void UpdatePB (int[][] b, TetrisPiece piece)
+        {
+            gameState.CurrentPiece = piece;
+            board.SetTileColors(b);
+            gameState.Board = Utils.ToFSharpList(b);
+        }
+
         private void Move(int xDir, int yDir)
         {
             TetrisPiece piece = gameState.CurrentPiece;
             int[][] b = board.GetTileColors();
             (b, piece) = movePiece(b, piece, xDir, yDir);
-            gameState.CurrentPiece = piece;
-            board.SetTileColors(b);
-            gameState.Board = Utils.ToFSharpList(b);
+            if(onGround(b, piece))
+            {
+                if (!isPieceLanded)
+                {
+                    isPieceLanded = true;
+                    lockTimer.Start();
+                }
+            }
+            else
+            {
+                isPieceLanded = false;
+                lockTimer.Stop();
+            }
+
+            UpdatePB(b, piece);
         }
 
         private void Rotate(int dir)
@@ -123,6 +133,42 @@ namespace TetrisUI
         {
             // Update game state using F# logic
             // gameState = GameLogic.updateGameState(gameState);
+        }
+
+        public void Start()
+        {
+            // Define the size of each tile and the size of the board
+            OpenTK.Mathematics.Vector2 tileSize = new OpenTK.Mathematics.Vector2(40, 40);
+            int boarderSize = 5;
+            int boardWidth = gameState.Board.Length;
+            int boardHeight = gameState.Board[0].Length;
+            float boardPixelHeight = boardHeight * (tileSize.Y + boarderSize);
+            float boardPixelWidth = boardWidth * (tileSize.X + boarderSize);
+
+            // Initialize the tiles array
+            Rectangle[][] tiles = new Rectangle[boardWidth][];
+            for (int x = 0; x < boardWidth; x++)
+            {
+                tiles[x] = new Rectangle[boardHeight];
+                for (int y = 0; y < boardHeight; y++)
+                {
+                    // Calculate the position of each tile based on its size and board position
+                    OpenTK.Mathematics.Vector2 position = new OpenTK.Mathematics.Vector2((x * (tileSize.X + boarderSize)) - (boardPixelWidth / 2f), (y * -(tileSize.Y + boarderSize)) + (boardPixelHeight / 2f));
+                    // Determine the color of the tile based on the game state
+                    Color4 color = (Color4)Board.ConvertColor(gameState.Board[x][y]);
+
+                    // Create a new rectangle for the tile
+                    tiles[x][y] = new Rectangle(tileSize, position, color);
+                }
+            }
+
+            // Create the board object with the initialized tiles
+            board = new Board(new OpenTK.Mathematics.Vector2(boardWidth, boardHeight), tiles, new OpenTK.Mathematics.Vector2(0, -50));
+            objects.Add(board);
+            board.SetTileColors(placePiece(board.GetTileColors(), gameState.CurrentPiece, false));
+            gameState.Board = Utils.ToFSharpList(board.GetTileColors());
+
+            dropTimer.Start();
         }
     }
 

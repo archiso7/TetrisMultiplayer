@@ -9,5 +9,10 @@ namespace TetrisUI
         {
             return ListModule.OfSeq(array.Select(row => ListModule.OfSeq(row)));
         }
+
+        public static int[][] FSharpListToArray(FSharpList<FSharpList<int>> fsharpList)
+        {
+            return fsharpList.Select(row => ListModule.ToArray(row)).ToArray();
+        }
     }
 }

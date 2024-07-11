@@ -21,7 +21,7 @@ module GameLogic =
                 Shape = shape
                 Table = pieceTable[shape]
                 Rotation = 0
-                Position = (0, 0)
+                Position = (3, 0)
             }
 
         shuffledShapes |> List.map createTetrisPiece
@@ -50,6 +50,26 @@ module GameLogic =
                     let yPos = y + snd piece.Position
                     newBoard.[xPos].[yPos] <- if remove then 0 else int piece.Shape
         newBoard
+
+    let nextPiece (board: int[][]) (state: GameState) = 
+        let piece = state.Queue |> List.head
+        let newQueue = state.Queue[1..] @ [state.Bag[0]]
+        let newBag = if state.Bag.Length < 2 then generateBag() else state.Bag[1..]
+        let newBoard = placePiece board piece false
+
+        // Convert int array array to int list list
+        let newBoardList = newBoard |> Array.map Array.toList |> Array.toList
+
+        let newState = 
+            { 
+                CurrentPiece = piece
+                Hold = None
+                Queue = newQueue
+                Bag = newBag
+                Board = newBoardList
+                Score = 0
+            }
+        newState
 
     let transposeMatrix (x: 'a array array) : 'a array array =
         match x with
@@ -91,6 +111,13 @@ module GameLogic =
 
         collisionDetected
 
+    let onGround (board: int[][]) (piece: TetrisPiece) = 
+        let tempPiece = {piece with Position = (fst piece.Position , snd piece.Position + 1)}
+        let cleanBoard = placePiece (Array.copy board) piece true
+        let isOnGround = checkCollision cleanBoard tempPiece
+        let b = placePiece cleanBoard piece false
+        isOnGround
+
     let movePiece (board: int[][]) (piece: TetrisPiece) (direction: Position) =
         let newPos = (fst piece.Position + fst direction, snd piece.Position + snd direction)
         let mutable newPiece = {piece with Position = newPos}
@@ -116,11 +143,12 @@ module GameLogic =
 
         let mutable collide = true
         let mutable count = 0
+        let kicks = if piece.Shape = Shape.I then iWallKick else wallKick
         while collide do
             collide <- checkCollision cleanBoard newPiece
             if collide then
                 let newPosition =
-                    (fst newPiece'.Position + (mul * fst wallKick.[count]), snd newPiece'.Position + (mul * snd wallKick.[count]))
+                    (fst newPiece'.Position + (mul * fst kicks.[count]), snd newPiece'.Position + (mul * snd kicks.[count]))
                 newPiece <- { newPiece with Position = newPosition }
                 count <- count + 1
                 if count > 3 then
