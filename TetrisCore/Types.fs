@@ -71,7 +71,7 @@ module Types =
 
     type GameState = {
         mutable CurrentPiece: TetrisPiece
-        Hold: TetrisPiece Option
+        mutable Hold: TetrisPiece Option
         Bag: TetrisPiece list
         Queue: TetrisPiece list
         mutable Board: int list list

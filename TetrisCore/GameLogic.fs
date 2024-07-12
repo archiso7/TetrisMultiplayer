@@ -63,13 +63,28 @@ module GameLogic =
         let newState = 
             { 
                 CurrentPiece = piece
-                Hold = None
+                Hold = state.Hold
                 Queue = newQueue
                 Bag = newBag
                 Board = newBoardList
-                Score = 0
+                Score = state.Score
             }
         newState
+
+    let holdPiece (state: GameState) =
+        match state.Hold with
+        | Some tempPiece -> 
+            // Swap current piece with the held piece
+            state.Hold <- Some { state.CurrentPiece with Position = (1, 1) }
+            let newBoard = placePiece (state.Board |> List.map List.toArray |> List.toArray) state.CurrentPiece true
+            state.CurrentPiece <- { tempPiece with Position = (3, 0) }
+            state.Board <- (placePiece newBoard state.CurrentPiece false) |> Array.map Array.toList |> Array.toList
+            state
+        | None -> 
+            // Move current piece to hold if no piece is held
+            state.Hold <- Some { state.CurrentPiece with Position = (1, 1) }
+            let newBoard = placePiece (state.Board |> List.map List.toArray |> List.toArray) state.CurrentPiece true
+            nextPiece newBoard state
 
     let transposeMatrix (x: 'a array array) : 'a array array =
         match x with
@@ -122,14 +137,15 @@ module GameLogic =
         let newPos = (fst piece.Position + fst direction, snd piece.Position + snd direction)
         let mutable newPiece = {piece with Position = newPos}
         let cleanBoard = placePiece board piece true
+        let canMove = checkCollision cleanBoard newPiece
         let outPiece = 
-            if checkCollision cleanBoard newPiece then
+            if canMove then
                 piece
             else
                 newPiece
         let newBoard = placePiece cleanBoard outPiece false
 
-        (newBoard, outPiece)
+        (not canMove, newBoard, outPiece)
 
     let rotatePiece (board: int[][]) (piece: TetrisPiece) (direction: int) =
         let res = customModulo (piece.Rotation + direction) 4
@@ -144,6 +160,7 @@ module GameLogic =
         let mutable collide = true
         let mutable count = 0
         let kicks = if piece.Shape = Shape.I then iWallKick else wallKick
+        let mutable moved = true
         while collide do
             collide <- checkCollision cleanBoard newPiece
             if collide then
@@ -154,7 +171,8 @@ module GameLogic =
                 if count > 3 then
                     newPiece <- { newPiece' with Table = rotateMatrix newPiece.Table (customModulo (4-direction) 4) }
                     collide <- false
+                    moved <- false
 
         let newBoard = placePiece cleanBoard newPiece false
 
-        (newBoard, newPiece)
+        (moved, newBoard, newPiece)
