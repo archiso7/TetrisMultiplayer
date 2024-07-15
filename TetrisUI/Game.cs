@@ -26,6 +26,7 @@ namespace TetrisUI
         private Board holdBoard;
         private KeyBindingManager keyBindingManager;
         private TetrisPiece lastHoldPiece;
+        private TetrisPiece lastQueuePiece;
 
         public Game()
         {
@@ -59,18 +60,13 @@ namespace TetrisUI
             lockTimer = new System.Timers.Timer(LockDelay);
             lockTimer.Elapsed += (sender, e) => LockPiece();
 
-            OpenTK.Mathematics.Vector2 vZero = new OpenTK.Mathematics.Vector2(0,0);
-
             Reset();
         }
 
         public void HandleInput(KeyboardKeyEventArgs e)
         {
             Keys k = e.Key;
-            if(!e.IsRepeat) // checks if key is first press or hold, could maybe pass this into a binding system insted idk
-            {
-                keyBindingManager.HandleKeyPress(k);
-            }
+            keyBindingManager.HandleKeyPress(k);
         }
 
         private void LockPiece()
@@ -160,6 +156,20 @@ namespace TetrisUI
                 holdBoard.SetTileColors(placePiece(holdBoard.GetTileColors(), holdPiece, false));
                 lastHoldPiece = holdPiece;
             }
+            
+            if((lastQueuePiece == null) || (gameState.Queue.Head != lastQueuePiece))
+            {
+                bagBoard.clear();
+                int[][] colors = bagBoard.GetTileColors();
+                for(int i = 0; i < gameState.Queue.Length; i++)
+                {
+                    TetrisPiece qPiece = gameState.Queue[i];
+                    TetrisPiece piece = new TetrisPiece(qPiece.Shape, qPiece.Table, qPiece.Rotation, Tuple.Create(1,1+(i*4)));
+                    colors = placePiece(colors, piece, false);
+                }
+                bagBoard.SetTileColors(colors);
+                lastQueuePiece = gameState.Queue.Head;
+            }
         }
 
         public void Reset()
@@ -176,8 +186,13 @@ namespace TetrisUI
             board.SetTileColors(placePiece(board.GetTileColors(), gameState.CurrentPiece, false));
             gameState.Board = Utils.ToFSharpList(board.GetTileColors());
 
-            holdBoard = new Board(new OpenTK.Mathematics.Vector2(6,4), tileSize, new OpenTK.Mathematics.Vector2(-400, 160));
+            holdBoard = new Board(new OpenTK.Mathematics.Vector2(6,4), tileSize*0.75f, new OpenTK.Mathematics.Vector2(-370, 185));
             objects.Add(holdBoard);
+            
+            bagBoard = new Board(new OpenTK.Mathematics.Vector2(6,20), tileSize*0.75f, new OpenTK.Mathematics.Vector2(370, -95));
+            objects.Add(bagBoard);
+
+            lastQueuePiece = null;
         }
 
         public void Start()

@@ -75,14 +75,14 @@ module GameLogic =
         match state.Hold with
         | Some tempPiece -> 
             // Swap current piece with the held piece
-            state.Hold <- Some { state.CurrentPiece with Position = (1, 1) }
+            state.Hold <- Some {{{ state.CurrentPiece with Position = (1, 1) } with Rotation = 0} with Table = pieceTable[state.CurrentPiece.Shape]}
             let newBoard = placePiece (state.Board |> List.map List.toArray |> List.toArray) state.CurrentPiece true
-            state.CurrentPiece <- { tempPiece with Position = (3, 0) }
+            state.CurrentPiece <- {{{ tempPiece with Position = (3, 0) } with Rotation = 0} with Table = pieceTable[tempPiece.Shape]}
             state.Board <- (placePiece newBoard state.CurrentPiece false) |> Array.map Array.toList |> Array.toList
             state
         | None -> 
             // Move current piece to hold if no piece is held
-            state.Hold <- Some { state.CurrentPiece with Position = (1, 1) }
+            state.Hold <- Some {{{ state.CurrentPiece with Position = (1, 1) } with Rotation = 0} with Table = pieceTable[state.CurrentPiece.Shape]}
             let newBoard = placePiece (state.Board |> List.map List.toArray |> List.toArray) state.CurrentPiece true
             nextPiece newBoard state
 
