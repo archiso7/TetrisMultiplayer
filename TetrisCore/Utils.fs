@@ -115,3 +115,8 @@ module Utils =
                 | [] -> shuffleOne acc before
                 | element::after -> shuffleOne (element::acc) (before @ after)
         shuffleOne [] list
+
+    let printIntArrayArray (arr: int[][]) =
+        arr |> Array.iter (fun row ->
+            row |> Array.iter (fun item -> printf "%d " item)
+            printfn "")
